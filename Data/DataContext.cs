@@ -1,3 +1,4 @@
+using appointment_scheduler_api.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace appointment_scheduler_api.Data
@@ -8,5 +9,7 @@ namespace appointment_scheduler_api.Data
         {
             
         }
+
+        public DbSet<User> Users => Set<User>();
     }
 }
