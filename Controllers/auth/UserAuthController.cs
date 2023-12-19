@@ -30,5 +30,19 @@ namespace appointment_scheduler_api.Controllers.auth
                 return BadRequest(response);
             }
         }
+
+        [HttpPost("login")]
+        public async Task<ActionResult<ServiceResponse<UserSignUpResponseDto>>> AddUserLogin(UserLoginRequestDto user)
+        {
+            var response = await _userAuthService.LoginUser(user);
+            if(response.Success == true)
+            {
+                return Ok(response);
+            }
+            else
+            {
+                return BadRequest(response);
+            }
+        }
     }
 }

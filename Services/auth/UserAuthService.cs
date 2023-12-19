@@ -2,6 +2,7 @@ using appointment_scheduler_api.Data;
 using appointment_scheduler_api.DTOs.auth;
 using appointment_scheduler_api.Models;
 using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 
 namespace appointment_scheduler_api.Services.auth
 {
@@ -15,6 +16,39 @@ namespace appointment_scheduler_api.Services.auth
             _mapper = mapper;
             _context = context;
             
+        }
+
+        public async Task<ServiceResponse<UserSignUpResponseDto>> LoginUser(UserLoginRequestDto user)
+        {
+            var serviceResponse = new ServiceResponse<UserSignUpResponseDto>();
+
+            try
+            {
+                var dbUser = await _context.Users.Where(userFromDb => userFromDb.Email == user.Email).ToListAsync();
+                
+                // When user not found in User table
+                if(dbUser is null || dbUser.Count == 0)
+                {
+                    throw new Exception("User not registered or invalid credentials");
+                }
+
+                // When user found, but password do not match
+                if(dbUser[0].Password != user.Password)
+                {
+                    throw new Exception("User not found or invalid credentials");
+                }
+
+                serviceResponse.Data = _mapper.Map<UserSignUpResponseDto>(dbUser[0]);
+                serviceResponse.Success = true;
+                serviceResponse.Message = "User login successful";
+            }
+            catch(Exception e)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = e.Message;
+            }
+
+            return serviceResponse;
         }
 
         public async Task<ServiceResponse<UserSignUpResponseDto>> SignUpUser(UserSignUpRequestDto newUser)
