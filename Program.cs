@@ -1,5 +1,6 @@
 using appointment_scheduler_api.Data;
 using appointment_scheduler_api.Services.auth;
+using appointment_scheduler_api.Services.users;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -30,6 +31,7 @@ builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
 // Register services
 builder.Services.AddScoped<IUserAuthService, UserAuthService>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 var app = builder.Build();
 
