@@ -14,6 +14,13 @@ builder.Services.AddDbContext<DataContext>(options => options.UseSqlServer(
 // Add support for services with controllers
 builder.Services.AddControllers();
 
+// Setup CORS and add policy to allow the frontend running on http://localhost:3000
+builder.Services.AddCors(options => options.AddPolicy(name: "AppointmentScheduler",
+    policy => {
+        policy.WithOrigins("http://localhost:3000").AllowAnyMethod().AllowAnyHeader();
+    }
+));
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -33,6 +40,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseCors("AppointmentScheduler");
 app.UseHttpsRedirection();
 app.MapControllers();
 
