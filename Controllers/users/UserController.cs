@@ -29,5 +29,19 @@ namespace appointment_scheduler_api.Controllers.users
                 return BadRequest(response);
             }
         }
+
+        [HttpGet("getuserbyemail")]
+        public async Task<ActionResult<ServiceResponse<UserDto>>> GetUserByEmail(string email) {
+            var response = await _userService.GetUserByEmail(email);
+
+            if(response.Success == true)
+            {
+                return Ok(response);
+            }
+            else
+            {
+                return BadRequest(response);
+            }
+        }
     }
 }

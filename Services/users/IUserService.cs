@@ -7,5 +7,6 @@ namespace appointment_scheduler_api.Services.users
     public interface IUserService
     {
         Task<ServiceResponse<List<UserDto>>> GetAllUsers();
+        Task<ServiceResponse<UserDto>> GetUserByEmail(string email);
     }
 }

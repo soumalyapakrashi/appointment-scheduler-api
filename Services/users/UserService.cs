@@ -43,5 +43,31 @@ namespace appointment_scheduler_api.Services.users
 
             return serviceResponse;
         }
+
+        public async Task<ServiceResponse<UserDto>> GetUserByEmail(string email)
+        {
+            var serviceResponse = new ServiceResponse<UserDto>();
+            try
+            {
+                var dbUser = await _context.Users.Where(userFromDb => userFromDb.Email == email).ToListAsync();
+
+                // If user is not found
+                if(dbUser is null || dbUser.Count == 0)
+                {
+                    throw new Exception("User not found");
+                }
+
+                serviceResponse.Data = _mapper.Map<UserDto>(dbUser[0]);
+                serviceResponse.Success = true;
+                serviceResponse.Message = "User with given email found";
+            }
+            catch(Exception e)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = e.Message;
+            }
+
+            return serviceResponse;
+        }
     }
 }
