@@ -11,5 +11,6 @@ namespace appointment_scheduler_api.Data
         }
 
         public DbSet<User> Users => Set<User>();
+        public DbSet<Meeting> Meetings => Set<Meeting>();
     }
 }

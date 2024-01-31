@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using appointment_scheduler_api.Data;
 
@@ -11,9 +12,11 @@ using appointment_scheduler_api.Data;
 namespace appointment_scheduler_api.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20231229172845_SetupMeetings")]
+    partial class SetupMeetings
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,21 +24,6 @@ namespace appointment_scheduler_api.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("MeetingUser", b =>
-                {
-                    b.Property<int>("AttendeesId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MeetingsId")
-                        .HasColumnType("int");
-
-                    b.HasKey("AttendeesId", "MeetingsId");
-
-                    b.HasIndex("MeetingsId");
-
-                    b.ToTable("MeetingUser");
-                });
 
             modelBuilder.Entity("appointment_scheduler_api.Models.Meeting", b =>
                 {
@@ -45,20 +33,22 @@ namespace appointment_scheduler_api.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("EndDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("StartDate")
-                        .HasColumnType("datetime2");
+                    b.Property<int>("HostId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("HostId");
 
                     b.ToTable("Meetings");
                 });
@@ -83,6 +73,9 @@ namespace appointment_scheduler_api.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("MeetingId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Password")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -92,22 +85,32 @@ namespace appointment_scheduler_api.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("MeetingId");
+
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("MeetingUser", b =>
+            modelBuilder.Entity("appointment_scheduler_api.Models.Meeting", b =>
                 {
-                    b.HasOne("appointment_scheduler_api.Models.User", null)
+                    b.HasOne("appointment_scheduler_api.Models.User", "Host")
                         .WithMany()
-                        .HasForeignKey("AttendeesId")
+                        .HasForeignKey("HostId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("Host");
+                });
+
+            modelBuilder.Entity("appointment_scheduler_api.Models.User", b =>
+                {
                     b.HasOne("appointment_scheduler_api.Models.Meeting", null)
-                        .WithMany()
-                        .HasForeignKey("MeetingsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .WithMany("Attendees")
+                        .HasForeignKey("MeetingId");
+                });
+
+            modelBuilder.Entity("appointment_scheduler_api.Models.Meeting", b =>
+                {
+                    b.Navigation("Attendees");
                 });
 #pragma warning restore 612, 618
         }
