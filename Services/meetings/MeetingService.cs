@@ -77,5 +77,25 @@ namespace appointment_scheduler_api.Services.meetings
 
             return serviceResponse;
         }
+
+        public async Task<ServiceResponse<MeetingYearResponseDto>> GetMeetingsByYear(string year, string email)
+        {
+            var serviceResponse = new ServiceResponse<MeetingYearResponseDto>();
+
+            try
+            {
+                var currentLoggedInUser = await _context.Users.Where(userFromDb => userFromDb.Email == email).ToListAsync();
+                var meetingsInSpecifiedYear = await _context.Meetings.Where(meetingFromDb => meetingFromDb.Attendees.Contains(currentLoggedInUser[0])).ToListAsync();
+
+                
+            }
+            catch(Exception e)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = e.Message;
+            }
+
+            return serviceResponse;
+        }
     }
 }

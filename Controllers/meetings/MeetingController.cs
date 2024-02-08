@@ -27,6 +27,21 @@ namespace appointment_scheduler_api.Controllers.meetings
 
         // }
 
+        [HttpGet("year")]
+        public async Task<ActionResult<ServiceResponse<List<MeetingYearResponseDto>>>> GetMeetingsByYear(string year, string email)
+        {
+            var response = await _meetingService.GetMeetingsByYear(year, email);
+            
+            if(response.Success == true)
+            {
+                return Ok(response);
+            }
+            else
+            {
+                return BadRequest(response);
+            }
+        }
+
         [HttpPost("new")]
         public async Task<ActionResult<ServiceResponse<CreateMeetingResponseDto>>> AddMeeting(CreateMeetingRequestDto new_meeting)
         {
